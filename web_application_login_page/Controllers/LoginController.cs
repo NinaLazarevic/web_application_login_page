@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using web_application_login_page.Models;
 
 namespace web_application_login_page.Controllers
 {
@@ -15,9 +16,31 @@ namespace web_application_login_page.Controllers
         }
 
         [HttpPost]
-        public ActionResult Authorise()
+        public ActionResult Authorise(web_application_login_page.Models.User userModel)
         {
-            return View();
+            using(LoginDataBaseEntities db = new LoginDataBaseEntities())
+            {
+                var userDetails = db.Users.Where(x => x.UserName == userModel.UserName && x.Password == userModel.Password).FirstOrDefault();
+
+                if (userDetails == null)
+                {
+                    userModel.LoginErrorMessage = "Wrong username or password";
+                    return View("Index", userModel);
+                }
+                else
+                {
+                    Session["userID"] = userDetails.UserID;
+                    Session["userName"] = userDetails.UserName;
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+
+        }
+
+        public ActionResult LogOut()
+        {
+            Session.Abandon();
+            return RedirectToAction("Index", "Login");
         }
     }
 }

@@ -18,8 +18,13 @@ namespace web_application_login_page.Models
     {
         public int UserID { get; set; }
         [DisplayName("Username")]
+        [Required(ErrorMessage ="This field cannot be empty")]
         public string UserName { get; set; }
+
         [DataType(DataType.Password)]
+        [Required(ErrorMessage = "This field cannot be empty")]
         public string Password { get; set; }
+
+        public string LoginErrorMessage { get; set; }
     }
 }
